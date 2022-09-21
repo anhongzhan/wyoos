@@ -35,4 +35,4 @@
 *.iso
 
 # Other
-.vscode
+.vscode/*
