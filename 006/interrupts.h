@@ -11,8 +11,11 @@ public:
     ~InterruptManager();
 
     void Activate();
+    void Deactivate();
 
 protected:
+    static InterruptManager* ActiveInterruptManager;
+
     struct GateDescriptor {
         uint16_t handleAddressLowBits;
         uint16_t gdt_codeSegementSelector;
@@ -41,6 +44,7 @@ protected:
     static void InterruptIgnore();
 
     static uint32_t handleInterrupt(uint8_t interruptNumber, uint32_t esp);
+    uint32_t DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp);
 
     static void HandleInterruptRequest0x00();
     static void HandleInterruptRequest0x01();
