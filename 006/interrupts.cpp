@@ -2,6 +2,23 @@
 
 void printf(const char*);
 
+InterruptHandler::InterruptHandler(uint8_t interruptNumber, InterruptManager* interruptManager){
+    this->interruptNumber = interruptNumber;
+    this->interruptManager = interruptManager;
+    interruptManager->handlers[interruptNumber] = this;
+}
+
+InterruptHandler::~InterruptHandler(){
+    if(interruptManager->handlers[interruptNumber] == this){
+        interruptManager->handlers[interruptNumber] = 0;
+    }
+}
+
+uint32_t InterruptHandler::HandleInterrupt(uint32_t esp){
+    return esp;
+}
+
+
 InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256];
 
 InterruptManager* InterruptManager::ActiveInterruptManager = 0;
@@ -33,6 +50,7 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt, uint16_t hardware
 
     const uint8_t IDT_INTERRUPT_GATE = 0xe;
     for(uint16_t i=0; i<256; i++){
+        handlers[i] = 0;
         SetInterruptDescriptorTableEntry(i, codeSegemnt, &InterruptIgnore, 0, IDT_INTERRUPT_GATE);
     }
 
@@ -122,10 +140,18 @@ uint32_t InterruptManager::handleInterrupt(uint8_t InterruptNumber, uint32_t esp
 }
 
 uint32_t InterruptManager::DoHandleInterrupt(uint8_t InterruptNumber, uint32_t esp){
-    printf("interrupt");
+    if(handlers[InterruptNumber] != 0){
+        esp = handlers[InterruptNumber]->HandleInterrupt(esp);
+    }else if(InterruptNumber != hardwareInterruptOffset){
+        char* foo = "UNHANDLED INTERRUPT 0X00";
+        const char* hex = "0123456789ABCDEF";
+        foo[22] = hex[(InterruptNumber >> 4) & 0x0f];
+        foo[23] = hex[InterruptNumber & 0x0f];
+        printf((const char*)foo);
+    }
     if(hardwareInterruptOffset <= InterruptNumber && InterruptNumber < hardwareInterruptOffset + 16){
         picMasterCommand.Write(0x20);
-        if(hardwareInterruptOffset + 8 < InterruptNumber){
+        if(hardwareInterruptOffset + 8 <= InterruptNumber){
             picSlaveCommand.Write(0x20);
         }
     }
