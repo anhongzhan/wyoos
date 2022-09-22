@@ -132,7 +132,7 @@ void InterruptManager::Deactivate() {
     }
 }
 
-uint32_t InterruptManager::handleInterrupt(uint8_t InterruptNumber, uint32_t esp){
+uint32_t InterruptManager::HandleInterrupt(uint8_t InterruptNumber, uint32_t esp){
     if(ActiveInterruptManager != 0){
         return ActiveInterruptManager->DoHandleInterrupt(InterruptNumber, esp);
     }
@@ -143,7 +143,7 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t InterruptNumber, uint32_t e
     if(handlers[InterruptNumber] != 0){
         esp = handlers[InterruptNumber]->HandleInterrupt(esp);
     }else if(InterruptNumber != hardwareInterruptOffset){
-        char* foo = "UNHANDLED INTERRUPT 0X00";
+        char* foo = (char*)"UNHANDLED INTERRUPT 0X00";
         const char* hex = "0123456789ABCDEF";
         foo[22] = hex[(InterruptNumber >> 4) & 0x0f];
         foo[23] = hex[InterruptNumber & 0x0f];

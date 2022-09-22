@@ -1,6 +1,6 @@
 .set IRQ_BASE, 0x20
 .section .text
-.extern _ZN16InterruptManager15handleInterruptEhj
+.extern _ZN16InterruptManager15HandleInterruptEhj
 
 .macro HandleInterruptRequest num
 .global _ZN16InterruptManager26HandleInterruptRequest\num\()Ev
@@ -67,7 +67,7 @@ int_bottom:
 
     pushl %esp
     push (interruptnumber)
-    call _ZN16InterruptManager15handleInterruptEhj
+    call _ZN16InterruptManager15HandleInterruptEhj
     
     movl %eax, %esp
     popl %gs
