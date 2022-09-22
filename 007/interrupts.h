@@ -16,7 +16,7 @@ protected:
     InterruptManager* interruptManager;
 
 public:
-    uint32_t HandleInterrupt(uint32_t esp);
+    virtual uint32_t HandleInterrupt(uint32_t esp);
 };
 
 class InterruptManager {
@@ -24,6 +24,8 @@ class InterruptManager {
 public:
     InterruptManager(GlobalDescriptorTable* gdt, uint16_t hardwareInterruptOffset);
     ~InterruptManager();
+
+    uint16_t getHardwareInterruptOffset();
 
     void Activate();
     void Deactivate();

@@ -93,18 +93,23 @@ InterruptManager::InterruptManager(GlobalDescriptorTable* gdt, uint16_t hardware
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0F, codeSegemnt, &HandleInterruptRequest0x0F, 0, IDT_INTERRUPT_GATE);
     SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x31, codeSegemnt, &HandleInterruptRequest0x31, 0, IDT_INTERRUPT_GATE);
 
+    //ICW1
     picMasterCommand.Write(0x11);
     picSlaveCommand.Write(0x11);
 
+    //ICW2
     picMasterData.Write(hardwareInterruptOffset);
     picSlaveData.Write(hardwareInterruptOffset + 0x8);
 
+    //ICW3
     picMasterData.Write(0x04);
     picSlaveData.Write(0x02);
 
+    //ICW4
     picMasterData.Write(0x01);
     picSlaveData.Write(0x01);
 
+    //OCW1
     picMasterData.Write(0x00);
     picSlaveData.Write(0x00);
 
@@ -149,6 +154,8 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t InterruptNumber, uint32_t e
         foo[23] = hex[InterruptNumber & 0x0f];
         printf((const char*)foo);
     }
+
+    //结束外部中断，由于前7个中断是主芯片控制，后面8个中断是slave芯片控制，所以要判断向哪个芯片发送0x20(PIC_EOI)
     if(hardwareInterruptOffset <= InterruptNumber && InterruptNumber < hardwareInterruptOffset + 16){
         picMasterCommand.Write(0x20);
         if(hardwareInterruptOffset + 8 <= InterruptNumber){
@@ -156,4 +163,8 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t InterruptNumber, uint32_t e
         }
     }
     return esp;
+}
+
+uint16_t InterruptManager::getHardwareInterruptOffset(){
+    return this->hardwareInterruptOffset;
 }
