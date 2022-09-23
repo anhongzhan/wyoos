@@ -12,7 +12,7 @@
 
 # 我的博客
 
-[anhongzhan.github.io](anhongzhan.github.io)
+[anhongzhan](anhongzhan.github.io)
 
 博客更新的进度会比代码仓库慢一些
 
