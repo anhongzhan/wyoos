@@ -22,7 +22,7 @@
 
 [003-makeiso](https://anhongzhan.github.io/2022/09/21/wyoos003/)
 
-[004-port]
+[004-port](https://anhongzhan.github.io/2022/09/26/wyoos004/)
 
 [005-gdt]
 
@@ -33,6 +33,8 @@
 [008-mouse]
 
 [009-CodeRefactoring]
+
+[010-PCI]
 
 # 注意
 
