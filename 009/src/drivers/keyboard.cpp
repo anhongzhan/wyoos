@@ -1,4 +1,8 @@
-#include "keyboard.h"
+#include "drivers/keyboard.h"
+
+using namespace wyoos::common;
+using namespace wyoos::drivers;
+using namespace wyoos::hardwarecommunication;
 
 void printf(const char*);
 void printfHex(uint8_t key);

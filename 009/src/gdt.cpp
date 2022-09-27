@@ -1,5 +1,8 @@
 #include "gdt.h"
 
+using namespace wyoos;
+using namespace wyoos::common;
+
 GlobalDescriptorTable::GlobalDescriptorTable()
   : nullSegmentDescriptor(0, 0, 0),
   unusedSegmentDescriptor(0, 0, 0),

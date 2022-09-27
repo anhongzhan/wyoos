@@ -1,5 +1,8 @@
-#include "driver.h"
-#include "types.h"
+#include "drivers/driver.h"
+#include "common/types.h"
+
+using namespace wyoos::common;
+using namespace wyoos::drivers;
 
 Driver::Driver() {}
 
