@@ -46,6 +46,12 @@ void PerippheraComponentInterconnectController::Write(uint8_t bus,
     dataPort.Write(value);
 }
 
+// Header Type register
+// Bit    7       6-0
+//       MF    Header Type
+// MF = 1 Then this device has multiple functions
+// Header Type = 0x0 Standard Type   : 0x1 PCI-to-PCI Bridge  : 0x2 CardBus Bridge
+// The following function return MF == 1
 bool PerippheraComponentInterconnectController::DeviceHasFunction(uint8_t bus, uint8_t device){
     return Read(bus, device, 0, 0x0E) & (1 << 7);
 }
@@ -53,6 +59,7 @@ bool PerippheraComponentInterconnectController::DeviceHasFunction(uint8_t bus, u
 void printf(const char*);
 void printfHex(uint8_t);
 
+// find all PCI devices
 void PerippheraComponentInterconnectController::SelectDrivers(DriverManager* driverManager, InterruptManager* interrupts){
     for (uint16_t bus = 0; bus < 256; bus++){
         for (uint8_t device = 0; device < 32; device++){
@@ -95,6 +102,7 @@ void PerippheraComponentInterconnectController::SelectDrivers(DriverManager* dri
     }
 }
 
+// vendor ID: identifies the manufacturer of the device
 Driver* PerippheraComponentInterconnectController::GetDriver(PerippheraComponentInterconnectDeviceDescriptor dev, InterruptManager* interrupts){
     switch (dev.vendor_id){
         case 0x1022: // AMD
@@ -123,10 +131,16 @@ Driver* PerippheraComponentInterconnectController::GetDriver(PerippheraComponent
     return 0;
 }
 
+// HeaderType 0x0 0x1 0x2
+// 0x0 : 6 Base address
+// 0x1 : 2 Base address
+// 0x2 : 0 Base address
+// Base address num(maxBARs) = 6 - 4 * bar
+// if (bar >= maxBARs) return result;
 BaseAddressRegister PerippheraComponentInterconnectController::GetBaseAddressRegister(uint8_t bus, uint8_t device, uint8_t function, uint8_t bar){
     BaseAddressRegister result;
     
-    uint32_t headertype = Read(bus, device, function, 0x0e) & 0x7e;
+    uint32_t headertype = Read(bus, device, function, 0x0e) & 0x7f;
     int maxBARs = 6 - 4 * headertype;
     if (bar >= maxBARs) return result;
 
@@ -148,6 +162,9 @@ BaseAddressRegister PerippheraComponentInterconnectController::GetBaseAddressReg
     return result;
 }
 
+// The PCI Specification defines the organization of the 256-byte Configuration Space registers 
+// The Common Header Fields have 64-byte space
+// All PCI device must support the Vendor ID, Device ID, Command and Status, Revision ID, Class Code and Header Type 
 PerippheraComponentInterconnectDeviceDescriptor PerippheraComponentInterconnectController::GetDeviceDescriptor(uint8_t bus, uint8_t device, uint8_t function){
     PerippheraComponentInterconnectDeviceDescriptor result;
 

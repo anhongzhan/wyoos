@@ -24,7 +24,7 @@
 
 [004-port](https://anhongzhan.github.io/2022/09/26/wyoos004/)
 
-[005-gdt]
+[005-gdt](https://anhongzhan.github.io/2022/09/30/wyoos005/)
 
 [006-interrupt]
 
@@ -35,6 +35,8 @@
 [009-CodeRefactoring]
 
 [010-PCI]
+
+[011-VGA]
 
 # 注意
 
