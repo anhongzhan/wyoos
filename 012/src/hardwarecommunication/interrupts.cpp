@@ -1,5 +1,6 @@
 #include "hardwarecommunication/interrupts.h"
 
+using namespace wyoos;
 using namespace wyoos::common;
 using namespace wyoos::hardwarecommunication;
 
@@ -43,11 +44,12 @@ void InterruptManager::SetInterruptDescriptorTableEntry(
     }
 
 
-InterruptManager::InterruptManager(GlobalDescriptorTable* gdt, uint16_t hardwareInterruptOffset)
+InterruptManager::InterruptManager(GlobalDescriptorTable* gdt, uint16_t hardwareInterruptOffset, TaskManager* taskManager)
     :picMasterCommand(0x20),
     picMasterData(0x21),
     picSlaveCommand(0xA0),
-    picSlaveData(0xA1)
+    picSlaveData(0xA1),
+    taskManager(taskManager)
 {
     this->hardwareInterruptOffset = hardwareInterruptOffset;
     uint16_t codeSegemnt = gdt->CodeSegmentSelector();
@@ -154,6 +156,11 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t InterruptNumber, uint32_t e
     }else if(InterruptNumber != hardwareInterruptOffset){
         printf("UNHANDLED INTERRUPT 0X");
         printfHex(InterruptNumber);
+    }
+
+    // 时钟中断切换任务 0x20
+    if (InterruptNumber == hardwareInterruptOffset) {
+        esp = (uint32_t)taskManager->Schedule((CPUState*)esp);
     }
 
     //结束外部中断，由于前7个中断是主芯片控制，后面8个中断是slave芯片控制，所以要判断向哪个芯片发送0x20(PIC_EOI)

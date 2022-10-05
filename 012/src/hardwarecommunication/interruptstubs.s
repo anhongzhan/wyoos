@@ -7,6 +7,7 @@
 _ZN5wyoos21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev:
 ;.global HandleInterruptRequest
     movb $\num + IRQ_BASE, (interruptnumber)
+    pushl $0
     jmp int_bottom
 .endm
 
@@ -59,22 +60,31 @@ HandleException 0x13
 
 
 int_bottom:
-    pusha 
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
+    pushl %ebp
+    pushl %edi
+    pushl %esi
+
+    pushl %edx
+    pushl %ecx
+    pushl %ebx
+    pushl %eax
 
     pushl %esp
     push (interruptnumber)
     call _ZN5wyoos21hardwarecommunication16InterruptManager15HandleInterruptEhj
     
     movl %eax, %esp
-    popl %gs
-    popl %fs
-    popl %es
-    popl %ds
-    popa
+
+    popl %eax
+    popl %ebx 
+    popl %ecx 
+    popl %edx 
+
+    popl %esi 
+    popl %edi 
+    popl %ebp 
+
+    add $4, %esp
 
 .global _ZN5wyoos21hardwarecommunication16InterruptManager15InterruptIgnoreEv
 _ZN5wyoos21hardwarecommunication16InterruptManager15InterruptIgnoreEv:

@@ -4,6 +4,7 @@
 #include "common/types.h"
 #include "hardwarecommunication/port.h"
 #include "gdt.h"
+#include "multitasking.h"
 
 namespace wyoos
 {
@@ -26,7 +27,7 @@ namespace wyoos
         class InterruptManager {
             friend class InterruptHandler;
         public:
-            InterruptManager(GlobalDescriptorTable* gdt, wyoos::common::uint16_t hardwareInterruptOffset);
+            InterruptManager(GlobalDescriptorTable* gdt, wyoos::common::uint16_t hardwareInterruptOffset, TaskManager* taskManager);
             ~InterruptManager();
 
             wyoos::common::uint16_t getHardwareInterruptOffset();
@@ -37,6 +38,7 @@ namespace wyoos
         protected:
             static InterruptManager* ActiveInterruptManager;
             InterruptHandler* handlers[256];
+            TaskManager* taskManager;
 
             struct GateDescriptor {
                 wyoos::common::uint16_t handleAddressLowBits;

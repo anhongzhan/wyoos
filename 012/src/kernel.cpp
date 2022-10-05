@@ -9,6 +9,7 @@
 #include "gui/desktop.h"
 #include "gui/widget.h"
 #include "gui/window.h"
+#include "multitasking.h"
 
 
 using namespace wyoos;
@@ -17,7 +18,7 @@ using namespace wyoos::drivers;
 using namespace wyoos::hardwarecommunication;
 using namespace wyoos::gui;
 
-#define GRAPHICMODE
+//#define GRAPHICMODE
 
 void printf(const char* str){
     static uint16_t *VideoMemory = (uint16_t*)0xb8000;
@@ -115,9 +116,28 @@ extern "C" void callConstructors(){
     }
 }
 
+void taskA() {
+    while(1) {
+        printf("A");
+    }
+}
+
+void taskB() {
+    while(1) {
+        printf("B");
+    }
+}
+
 extern "C" void kernelMain(void* multiboot_structure, uint32_t magicnumber){
     GlobalDescriptorTable gdt;
-    InterruptManager interrupts(&gdt, 0x20);
+
+    TaskManager taskManager;
+    Task task1(&gdt, taskA);
+    Task task2(&gdt, taskB);
+    taskManager.AddTask(&task1);
+    taskManager.AddTask(&task2);
+
+    InterruptManager interrupts(&gdt, 0x20, &taskManager);
 
 #ifdef GRAPHICMODE
     Desktop desktop(320, 200, 0x00, 0x00, 0xa8);
