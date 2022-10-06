@@ -38,7 +38,9 @@
 
 [011-VGA]
 
-[012-GUI]
+[012-GUI+TaskSwitch]
+
+[013-MemoryManagement]
 
 # 注意
 
