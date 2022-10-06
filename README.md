@@ -26,7 +26,7 @@
 
 [005-gdt](https://anhongzhan.github.io/2022/09/30/wyoos005/)
 
-[006-interrupt]
+[006-interrupt](https://anhongzhan.github.io/2022/10/06/wyoos006/)
 
 [007-keyboard]
 
